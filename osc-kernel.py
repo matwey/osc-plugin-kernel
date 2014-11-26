@@ -1,5 +1,8 @@
-from osc import cmdln
-from osc import build, core
+from osc import core, cmdln
+try:
+	from xml.etree import cElementTree as ET
+except ImportError:
+	import cElementTree as ET
 
 def log_url(self, project, repository, arch, package):
 	return core.makeurl(conf.config['apiurl'], ['build', project, repository, arch, package, '_log'])
@@ -9,7 +12,7 @@ def get_kernel_package(self, project, package="kernel-default"):
 
 def get_kernel_version(self, project, package, repository, arch):
 	buildinfo_xml = core.get_buildinfo(conf.config['apiurl'], project, package, repository, arch)
-	buildinfo_tree = build.ET.fromstring(buildinfo_xml)
+	buildinfo_tree = ET.fromstring(buildinfo_xml)
 	return buildinfo_tree.find("versrel").text
 
 def get_kernel_project(self, project):
