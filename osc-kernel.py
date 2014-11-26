@@ -42,6 +42,7 @@ def format_table(self, archs, projects):
 
 @cmdln.alias('ks')
 @cmdln.option('-p', '--project', action='append', help='specify one or more projects to show')
+@cmdln.option('-a', '--arch', action='append', help='specify one or more archs to show')
 def do_kernelsummary(self, subcmd, opts):
 	"""${cmd_name}: Show summary of the kernel packages
 
@@ -52,17 +53,19 @@ def do_kernelsummary(self, subcmd, opts):
 	"""
 
 	projects = ["Kernel:HEAD", "Kernel:stable", "Kernel:openSUSE-13.2"]
+	archs = ["i586", "x86_64", "armv6l", "armv7l", "aarch64", "ppc", "ppc64"]
 	if opts.project:
 		projects = opts.project
-	_archs = ["i586", "x86_64", "armv6l", "armv7l", "aarch64", "ppc", "ppc64"]
+	if opts.arch:
+		archs = opts.arch
 
-	fmt = self.format_table(_archs, projects)
+	fmt = self.format_table(archs, projects)
 
 	res = dict([(p, self.get_kernel_project(p)) for p in projects])
 
 	print "Kernel summary:"
 	print fmt.format("",*projects)
-	for a in _archs:
+	for a in archs:
 		print fmt.format(a,*([res[p][0].get(a,"") for p in projects]))
 
 	print
