@@ -41,6 +41,7 @@ def format_table(self, archs, projects):
 	return "\t".join(['{{{0}:<{1}}}'.format(*x) for x in enumerate(w)])
 
 @cmdln.alias('ks')
+@cmdln.option('-p', '--project', action='append', help='specify one or more projects to show')
 def do_kernelsummary(self, subcmd, opts):
 	"""${cmd_name}: Show summary of the kernel packages
 
@@ -50,17 +51,19 @@ def do_kernelsummary(self, subcmd, opts):
 	${cmd_option_list}
 	"""
 
-	_projects = ["Kernel:HEAD", "Kernel:stable", "Kernel:openSUSE-13.2"]
+	projects = ["Kernel:HEAD", "Kernel:stable", "Kernel:openSUSE-13.2"]
+	if opts.project:
+		projects = opts.project
 	_archs = ["i586", "x86_64", "armv6l", "armv7l", "aarch64", "ppc", "ppc64"]
 
-	fmt = self.format_table(_archs, _projects)
+	fmt = self.format_table(_archs, projects)
 
-	res = dict([(p, self.get_kernel_project(p)) for p in _projects])
+	res = dict([(p, self.get_kernel_project(p)) for p in projects])
 
 	print "Kernel summary:"
-	print fmt.format("",*_projects)
+	print fmt.format("",*projects)
 	for a in _archs:
-		print fmt.format(a,*([res[p][0].get(a,"") for p in _projects]))
+		print fmt.format(a,*([res[p][0].get(a,"") for p in projects]))
 
 	print
 	print "Failed packages:"
