@@ -53,7 +53,7 @@ def do_kernelsummary(self, subcmd, opts):
 	${cmd_option_list}
 	"""
 
-	projects = ["Kernel:HEAD", "Kernel:stable", "Kernel:openSUSE-13.2"]
+	projects = ["Kernel:HEAD", "Kernel:stable", "Kernel:openSUSE-42.1", "Kernel:openSUSE-13.2"]
 	archs = ["i586", "x86_64", "armv6l", "armv7l", "aarch64", "ppc", "ppc64"]
 	if opts.project:
 		projects = opts.project
