@@ -15,12 +15,12 @@ def get_kernel_version(self, project, package, repository, arch):
 	buildinfo_tree = ET.fromstring(buildinfo_xml)
 	return buildinfo_tree.find("versrel").text
 
-def get_kernel_project(self, project):
+def get_kernel_project(self, project, package):
 	ret = {}
 	fails = []
 	version = None
 
-	for x in self.get_kernel_package(project):
+	for x in self.get_kernel_package(project, package):
 		out = x['code']
 		if x['code'] == 'succeeded':
 			if version == None:
@@ -43,6 +43,7 @@ def format_table(self, archs, projects):
 @cmdln.alias('ks')
 @cmdln.option('-p', '--project', action='append', help='specify one or more projects to show')
 @cmdln.option('-a', '--arch', action='append', help='specify one or more archs to show')
+@cmdln.option('--package', action='store', default='kernel-default', help='specify package name to show (kernel-default is default)')
 def do_kernelsummary(self, subcmd, opts):
 	"""${cmd_name}: Show summary of the kernel packages
 
@@ -61,7 +62,7 @@ def do_kernelsummary(self, subcmd, opts):
 
 	fmt = self.format_table(archs, projects)
 
-	res = dict([(p, self.get_kernel_project(p)) for p in projects])
+	res = dict([(p, self.get_kernel_project(p, opts.package)) for p in projects])
 
 	print "Kernel summary:"
 	print fmt.format("",*projects)
