@@ -8,7 +8,8 @@ def log_url(self, project, repository, arch, package):
 	return core.makeurl(conf.config['apiurl'], ['build', project, repository, arch, package, '_log'])
 
 def get_kernel_package(self, project, package="kernel-default"):
-	return [x for x in core.get_package_results(conf.config['apiurl'], project, package) if '_oldstate' not in x]
+	xml = next(core.get_package_results(conf.config['apiurl'], project, package, wait=False))
+	return [res for res, is_mult in core.result_xml_to_dicts(xml)]
 
 def get_kernel_version(self, project, package, repository, arch):
 	buildinfo_xml = core.get_buildinfo(conf.config['apiurl'], project, package, repository, arch)
@@ -64,14 +65,14 @@ def do_kernelsummary(self, subcmd, opts):
 
 	res = dict([(p, self.get_kernel_project(p, opts.package)) for p in projects])
 
-	print "Kernel summary:"
-	print fmt.format("",*projects)
+	print("Kernel summary:")
+	print(fmt.format("",*projects))
 	for a in archs:
-		print fmt.format(a,*([res[p][0].get(a,"") for p in projects]))
+		print(fmt.format(a,*([res[p][0].get(a,"") for p in projects])))
 
-	print
-	print "Failed packages:"
+	print()
+	print("Failed packages:")
 	for (x,fails) in res.values():
 		for f in fails:
-			print f
+			print(f)
 
